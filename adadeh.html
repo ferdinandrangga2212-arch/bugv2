@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA BUG EXPLOIT - FIRE EAGLE</title>
+    <style>
+        :root {
+            --primary: #ff0000;
+            --secondary: #8a2be2;
+            --accent: #0000ff;
+            --bg: #050505;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .page { 
+            display: none; 
+            height: 100vh; width: 100vw; 
+            position: absolute; top: 0; left: 0;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10;
+        }
+        .active { display: flex; }
+
+        video { pointer-events: none; user-select: none; }
+
+        /* VIDEO FULLSCREEN - Menutup seluruh layar tanpa sela */
+        .fs-video {
+            position: fixed; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.4);
+        }
+
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid var(--secondary);
+            padding: 30px; border-radius: 10px;
+            box-shadow: 0 0 30px var(--primary);
+            text-align: center;
+            width: 85%; max-width: 350px;
+            z-index: 20;
+        }
+
+        input {
+            background: #111; border: 1px solid var(--accent);
+            color: #0f0; padding: 12px; margin: 10px 0; width: 90%;
+            outline: none; border-radius: 5px;
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 12px 20px;
+            cursor: pointer; font-weight: bold; width: 100%;
+            margin-top: 15px; text-transform: uppercase;
+            border-radius: 5px; transition: 0.3s;
+        }
+        button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--primary); }
+
+        /* Kotak Video Kecil di Tengah */
+        .video-box {
+            width: 90%; max-width: 550px; 
+            aspect-ratio: 16 / 9;
+            border: 2px solid var(--primary);
+            margin-bottom: 15px; overflow: hidden;
+            background: #000;
+            z-index: 20;
+        }
+        .video-box video { width: 100%; height: 100%; object-fit: cover; }
+
+        .scroll-area {
+            height: 180px; overflow-y: auto;
+            width: 90%; max-width: 500px;
+            border: 1px solid #333; margin: 10px 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 20;
+        }
+        .bug-item { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; }
+        .bug-item:hover { background: var(--secondary); padding-left: 20px; }
+        .selected { background: var(--primary) !important; font-weight: bold; }
+
+        .progress-container { width: 80%; height: 15px; border: 1px solid #fff; margin-top: 20px; overflow: hidden; z-index: 20; }
+        #progress-bar { width: 0%; height: 100%; background: var(--primary); }
+
+        .popup {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #000; border: 3px solid var(--primary);
+            padding: 30px; z-index: 100; text-align: center;
+            display: none; box-shadow: 0 0 100px var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="audio-selection" loop><source src="musik.mp3" type="audio/mpeg"></audio>
+    <audio id="audio-sending-bug"><source src="musik2.mp3" type="audio/mpeg"></audio>
+
+    <div id="page-login" class="page active">
+        <video class="fs-video" autoplay loop muted playsinline>
+            <source src="video2.mp4" type="video/mp4">
+        </video>
+        <div class="glass-panel">
+            <h2 style="color: var(--primary);">FIRE EAGLE LOGIN</h2>
+            <input type="text" id="usn" placeholder="USERNAME">
+            <input type="password" id="pw" placeholder="PASSWORD">
+            <button onclick="checkLogin()">INITIATE ACCESS</button>
+        </div>
+    </div>
+
+    <div id="page-loading-init" class="page">
+        <video class="fs-video" id="vid-loading" playsinline>
+            <source src="video1.mp4" type="video/mp4">
+        </video>
+        <h2 style="color: var(--accent); text-shadow: 0 0 10px #000;">AUTHORIZING...</h2>
+    </div>
+
+    <div id="page-selection" class="page">
+        <video class="fs-video" autoplay loop muted playsinline>
+            <source src="lag.mp4" type="video/mp4">
+        </video>
+
+        <div class="video-box">
+            <video id="vid-selection" autoplay loop muted playsinline>
+                <source src="video4.mp4" type="video/mp4">
+            </video>
+        </div>
+        <input type="text" id="target-number" placeholder="Target: 628xxx" style="width: 90%; max-width: 500px; z-index: 20;">
+        <div class="scroll-area" id="bug-list"></div>
+        <div style="width: 90%; max-width: 500px; display: flex; gap: 10px; z-index: 20;">
+            <button onclick="showPage('page-profile')" style="background: var(--accent);">PROFILE</button>
+            <button onclick="startSending()">SEND EXPLOIT</button>
+        </div>
+    </div>
+
+    <div id="page-profile" class="page">
+        <video class="fs-video" autoplay loop muted playsinline>
+            <source src="lag.mp4" type="video/mp4">
+        </video>
+        <div class="glass-panel">
+            <h1 style="color: var(--secondary)">USER PROFILE</h1>
+            <p>NAME: FERDINAND RANGGA</p>
+            <p>TEAM: FIRE EAGLE</p>
+            <button onclick="showPage('page-selection')">BACK</button>
+        </div>
+    </div>
+
+    <div id="page-sending" class="page">
+        <video class="fs-video" autoplay loop muted playsinline>
+            <source src="lag.mp4" type="video/mp4">
+        </video>
+        <h2 id="send-status" style="color: var(--primary); text-shadow: 0 0 10px #000; z-index: 20;">PREPARING ATTACK...</h2>
+        <div class="progress-container"><div id="progress-bar"></div></div>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: #ccc; z-index: 20;">DO NOT CLOSE THIS TERMINAL</p>
+    </div>
+
+    <div id="final-popup" class="popup">
+        <h2 style="color: var(--primary)">EXPLOIT SUCCESS!</h2>
+        <p id="popup-text">Payload has been successfully delivered.</p>
+        <button onclick="redirectToWA()">OPEN WHATSAPP</button>
+    </div>
+
+    <script>
+        const bugTypes = ["Ghost Text V1", "Crash Media", "Infinite Call", "RAM Eater", "Sticker Bomb", "Contact Exploit", "UI Freezer", "Ping Flooder", "Kernel Panic", "Database Wipe"];
+        const audioSelect = document.getElementById('audio-selection');
+        const audioSend = document.getElementById('audio-sending-bug');
+        const vidLoading = document.getElementById('vid-loading');
+        const progressBar = document.getElementById('progress-bar');
+        
+        const listContainer = document.getElementById('bug-list');
+        bugTypes.forEach(bug => {
+            let div = document.createElement('div');
+            div.className = 'bug-item';
+            div.innerText = bug;
+            div.onclick = function() {
+                document.querySelectorAll('.bug-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            };
+            listContainer.appendChild(div);
+        });
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function checkLogin() {
+            const u = document.getElementById('usn').value;
+            const p = document.getElementById('pw').value;
+            if(u === p && u !== "") {
+                showPage('page-loading-init');
+                vidLoading.muted = false; 
+                vidLoading.play();
+                
+                vidLoading.onended = () => {
+                    showPage('page-selection');
+                    audioSelect.play();
+                };
+            } else { alert("WRONG CREDENTIALS!"); }
+        }
+
+        function startSending() {
+            const num = document.getElementById('target-number').value;
+            if(!num) return alert("Masukkan nomor target!");
+            
+            audioSelect.pause(); 
+            showPage('page-sending');
+            
+            progressBar.style.width = "0%";
+            audioSend.currentTime = 0;
+            audioSend.play();
+
+            let steps = ["Locking Target...", "Bypassing Security...", "Injecting Bug...", "Sending Packets...", "Finalizing..."];
+            
+            const updateProgress = () => {
+                if (!audioSend.paused) {
+                    let percentage = (audioSend.currentTime / audioSend.duration) * 100;
+                    progressBar.style.width = percentage + "%";
+                    
+                    let stepIndex = Math.floor((audioSend.currentTime / audioSend.duration) * steps.length);
+                    if(steps[stepIndex]) {
+                        document.getElementById('send-status').innerText = steps[stepIndex];
+                    }
+                    requestAnimationFrame(updateProgress);
+                }
+            };
+
+            audioSend.onplay = () => requestAnimationFrame(updateProgress);
+
+            audioSend.onended = () => {
+                progressBar.style.width = "100%";
+                document.getElementById('send-status').innerText = "COMPLETE!";
+                setTimeout(() => {
+                    document.getElementById('popup-text').innerText = "Payload sent to: " + num;
+                    document.getElementById('final-popup').style.display = 'block';
+                }, 500);
+            };
+        }
+
+        function redirectToWA() {
+            const num = document.getElementById('target-number').value;
+            window.location.href = "https://wa.me/" + num;
+        }
+    </script>
+</body>
+</html>
